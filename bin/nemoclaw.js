@@ -153,11 +153,20 @@ async function setup() {
 }
 
 async function deploy(instanceName) {
+  if (!instanceName) {
+    console.error("  Usage: nemoclaw deploy <instance-name>");
+    console.error("");
+    console.error("  Examples:");
+    console.error("    nemoclaw deploy my-gpu-box");
+    console.error("    nemoclaw deploy nemoclaw-prod");
+    console.error("    nemoclaw deploy nemoclaw-test");
+    process.exit(1);
+  }
   await ensureApiKey();
   if (isRepoPrivate("NVIDIA/OpenShell")) {
     await ensureGithubToken();
   }
-  const name = instanceName || "nemoclaw";
+  const name = instanceName;
   const gpu = process.env.NEMOCLAW_GPU || "a2-highgpu-1g:nvidia-tesla-a100:1";
 
   console.log("");
@@ -222,7 +231,7 @@ function help() {
 
   Usage:
     nemoclaw setup                 Set up locally (gateway, providers, sandbox)
-    nemoclaw deploy [name]         Deploy to a Brev VM and start services
+    nemoclaw deploy <name>         Deploy to a Brev VM and start services
     nemoclaw start                 Start services (JensenClaw, Telegram, tunnel)
     nemoclaw stop                  Stop all services
     nemoclaw status                Show service status

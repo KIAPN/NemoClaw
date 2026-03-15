@@ -20,8 +20,7 @@ That's it. First run prompts for your NVIDIA API Key (get one from [build.nvidia
 ### Deploy to a cloud VM
 
 ```bash
-nemoclaw deploy            # creates a Brev VM and sets up everything
-nemoclaw deploy my-gpu-box # custom instance name
+nemoclaw deploy my-gpu-box
 ```
 
 Requires the [Brev CLI](https://brev.nvidia.com). The deploy script installs Docker, NVIDIA Container Toolkit (if GPU present), and OpenShell on the VM automatically.
