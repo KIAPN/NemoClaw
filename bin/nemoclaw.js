@@ -106,7 +106,7 @@ async function deploy(instanceName) {
 
   console.log("  Syncing NemoClaw to VM...");
   run(`ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR ${name} 'mkdir -p /home/ubuntu/nemoclaw'`);
-  run(`scp -q -r -o StrictHostKeyChecking=no -o LogLevel=ERROR "${ROOT}/scripts" "${ROOT}/Dockerfile" "${ROOT}/nemoclaw" "${ROOT}/nemoclaw-blueprint" "${ROOT}/.jensenclaw" ${name}:/home/ubuntu/nemoclaw/`);
+  run(`rsync -az --delete --exclude node_modules --exclude .git --exclude src -e "ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR" "${ROOT}/scripts" "${ROOT}/Dockerfile" "${ROOT}/nemoclaw" "${ROOT}/nemoclaw-blueprint" "${ROOT}/.jensenclaw" "${ROOT}/bin" "${ROOT}/package.json" ${name}:/home/ubuntu/nemoclaw/`);
 
   const envLines = [`NVIDIA_API_KEY=${process.env.NVIDIA_API_KEY}`];
   const ghToken = process.env.GITHUB_TOKEN;
