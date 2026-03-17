@@ -11,6 +11,7 @@ const registry = require("./registry");
 const nim = require("./nim");
 const policies = require("./policies");
 const HOST_GATEWAY_URL = "http://host.openshell.internal";
+const EXPERIMENTAL = process.env.NEMOCLAW_EXPERIMENTAL === "1";
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -196,43 +197,49 @@ async function setupNim(sandboxName, gpu) {
   let provider = "nvidia-nim";
   let nimContainer = null;
 
-  // Detect local inference options
-  const hasOllama = !!runCapture("command -v ollama", { ignoreError: true });
-  const ollamaRunning = !!runCapture("curl -sf http://localhost:11434/api/tags 2>/dev/null", { ignoreError: true });
-  const vllmRunning = !!runCapture("curl -sf http://localhost:8000/v1/models 2>/dev/null", { ignoreError: true });
+  // Detect local inference options (only in experimental mode)
+  let hasOllama = false;
+  let ollamaRunning = false;
+  let vllmRunning = false;
 
-  // Auto-select if a local inference engine is already running
-  if (vllmRunning) {
-    console.log("  ✓ vLLM detected on localhost:8000 — using it");
-    provider = "vllm-local";
-    model = "vllm-local";
-    registry.updateSandbox(sandboxName, { model, provider, nimContainer });
-    return { model, provider };
-  }
-  if (ollamaRunning) {
-    console.log("  ✓ Ollama detected on localhost:11434 — using it");
-    provider = "ollama-local";
-    model = "nemotron-3-nano";
-    registry.updateSandbox(sandboxName, { model, provider, nimContainer });
-    return { model, provider };
+  if (EXPERIMENTAL) {
+    hasOllama = !!runCapture("command -v ollama", { ignoreError: true });
+    ollamaRunning = !!runCapture("curl -sf http://localhost:11434/api/tags 2>/dev/null", { ignoreError: true });
+    vllmRunning = !!runCapture("curl -sf http://localhost:8000/v1/models 2>/dev/null", { ignoreError: true });
+
+    // Auto-select if a local inference engine is already running
+    if (vllmRunning) {
+      console.log("  ✓ vLLM detected on localhost:8000 — using it (experimental)");
+      provider = "vllm-local";
+      model = "vllm-local";
+      registry.updateSandbox(sandboxName, { model, provider, nimContainer });
+      return { model, provider };
+    }
+    if (ollamaRunning) {
+      console.log("  ✓ Ollama detected on localhost:11434 — using it (experimental)");
+      provider = "ollama-local";
+      model = "nemotron-3-nano";
+      registry.updateSandbox(sandboxName, { model, provider, nimContainer });
+      return { model, provider };
+    }
   }
 
   // Build options list dynamically
   const options = [];
-  if (gpu && gpu.nimCapable) {
-    options.push({ key: "nim", label: "Local NIM container (NVIDIA GPU)" });
+  if (EXPERIMENTAL && gpu && gpu.nimCapable) {
+    options.push({ key: "nim", label: "Local NIM container (NVIDIA GPU) [experimental]" });
   }
   options.push({ key: "cloud", label: "NVIDIA Cloud API (build.nvidia.com)" });
-  if (hasOllama || ollamaRunning) {
-    options.push({ key: "ollama", label: `Local Ollama (localhost:11434)${ollamaRunning ? " — running" : ""}` });
+  if (EXPERIMENTAL && (hasOllama || ollamaRunning)) {
+    options.push({ key: "ollama", label: `Local Ollama (localhost:11434)${ollamaRunning ? " — running" : ""} [experimental]` });
   }
-  if (vllmRunning) {
-    options.push({ key: "vllm", label: "Existing vLLM instance (localhost:8000) — running" });
+  if (EXPERIMENTAL && vllmRunning) {
+    options.push({ key: "vllm", label: "Existing vLLM instance (localhost:8000) — running [experimental]" });
   }
 
-  // On macOS without Ollama, offer to install it
-  if (!hasOllama && process.platform === "darwin") {
-    options.push({ key: "install-ollama", label: "Install Ollama (recommended for macOS)" });
+  // On macOS without Ollama, offer to install it (experimental only)
+  if (EXPERIMENTAL && !hasOllama && process.platform === "darwin") {
+    options.push({ key: "install-ollama", label: "Install Ollama (recommended for macOS) [experimental]" });
   }
 
   if (options.length > 1) {
