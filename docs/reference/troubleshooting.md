@@ -27,7 +27,7 @@ This page covers common issues you may encounter when installing, onboarding, or
 :::{admonition} Get Help
 :class: tip
 
-If your issue is not listed here, join the [NemoClaw Discord](https://discord.com/channels/1019361803752456192/1482072289511211200) to ask questions and get help from the community. You can also [file an issue on GitHub](https://github.com/NVIDIA/NemoClaw/issues/new).
+If your issue is not listed here, join the [NemoClaw Discord](https://discord.com/invite/nvidiadeveloper) to ask questions and get help from the community. You can also [file an issue on GitHub](https://github.com/NVIDIA/NemoClaw/issues/new).
 :::
 
 ## Installation

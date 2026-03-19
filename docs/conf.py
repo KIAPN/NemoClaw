@@ -104,7 +104,7 @@ html_theme_options = {
         },
         {
             "name": "NemoClaw Discord",
-            "url": "https://discord.com/channels/1019361803752456192/1482072289511211200",
+            "url": "https://discord.com/invite/nvidiadeveloper",
             "icon": "fa-brands fa-discord",
             "type": "fontawesome",
         },
