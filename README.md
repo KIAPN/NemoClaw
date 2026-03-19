@@ -61,7 +61,7 @@ The sandbox image is approximately 2.4 GB compressed. During image push, the Doc
 | Windows WSL | Docker Desktop (WSL backend) | Supported target path |
 
 > [!TIP]
-> **DGX Spark users:** Follow the [DGX Spark setup guide](spark-install.md) instead — it covers Spark-specific prerequisites (cgroup v2, Docker configuration) before running the standard installer.
+> For DGX Spark, follow the [DGX Spark setup guide](spark-install.md). It covers Spark-specific prerequisites, such as cgroup v2 and Docker configuration, before running the standard installer.
 
 ### Install NemoClaw and Onboard OpenClaw Agent
 
