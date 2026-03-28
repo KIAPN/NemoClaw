@@ -10,10 +10,12 @@ filesystem_policy:
     - /app
     - /etc
     - /var/log
+    - /sandbox/.openclaw
   read_write:
     - /sandbox
     - /tmp
     - /dev/null
+    - /sandbox/.openclaw-data
 
 landlock:
   compatibility: best_effort
